@@ -1,12 +1,11 @@
-from fastapi import FastAPI, HTTPException, status, Path
-from typing import Optional
-from pydantic import BaseModel
+from fastapi import FastAPI
+from app.api.issues import router as issues_router
+
+app = FastAPI(title="Issue Triage System")
+
+app.include_router(issues_router)
 
 
-app = FastAPI()
-
-
-
-@app.get("/")
-def root():
-    return{"Testing the endpoint"}
+@app.get("/health")
+def health():
+    return {"status": "ok"}
