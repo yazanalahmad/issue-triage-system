@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -7,4 +9,7 @@ class Settings(BaseSettings):
     db_schema: str = "issue_triage"
 
 
-settings = Settings()
+if TYPE_CHECKING:
+    settings = Settings(database_url="postgresql+psycopg://example")
+else:
+    settings = Settings()

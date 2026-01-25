@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 from app.core.database import get_db
+from app.core.errors import APIError
 from app.schemas.issue import IssueCreate, IssueRead, ErrorResponse
 from app.schemas.enums import IssueStatus, Severity, Category
 from app.services.triage import predict_severity_and_category
@@ -27,12 +28,10 @@ def create_issue(payload: IssueCreate, db: Session = Depends(get_db)):
         severity = Severity(severity_str)
         category = Category(category_str)
     except ValueError:
-        raise HTTPException(
+        raise APIError(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "code": "invalid_triage",
-                "message": "Predicted values are not valid enums.",
-            },
+            code="invalid_triage",
+            message="Predicted values are not valid enums.",
         )
 
     q = text(
@@ -68,25 +67,21 @@ def create_issue(payload: IssueCreate, db: Session = Depends(get_db)):
             .first()
         )
         if row is None:
-            raise HTTPException(
+            raise APIError(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "code": "insert_failed",
-                    "message": "Issue insert returned no row.",
-                },
+                code="insert_failed",
+                message="Issue insert returned no row.",
             )
         db.commit()
-    except HTTPException:
+    except APIError:
         db.rollback()
         raise
     except Exception:
         db.rollback()
-        raise HTTPException(
+        raise APIError(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "code": "db_error",
-                "message": "Database operation failed.",
-            },
+            code="db_error",
+            message="Database operation failed.",
         )
 
     return row
