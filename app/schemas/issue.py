@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel, Field
-from app.schemas.enums_example import Environment, IssueStatus, Severity, Category
+from app.schemas.enums import Environment, IssueStatus, Severity, Category
 
 
 class IssueCreate(BaseModel):
@@ -26,4 +26,4 @@ class IssueRead(BaseModel):
 class ErrorResponse(BaseModel):
     code: str
     message: str
-    details: dict | None = None
+    details: dict[str, object] | None = None

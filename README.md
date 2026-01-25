@@ -35,6 +35,18 @@ Response:
 }
 ```
 
+### Error responses
+All error responses use a single envelope:
+```json
+{
+  "code": "validation_error",
+  "message": "Request validation failed.",
+  "details": {
+    "errors": []
+  }
+}
+```
+
 Health:
 - `GET /health` -> `{"status": "ok"}`
 
@@ -65,7 +77,7 @@ uvicorn app.main:app --reload
 - AI: replace rule-based triage with a model and add evaluation metrics
 
 ## Project status
-- v0.1: API skeleton + rule-based triage
+- v0.1: API skeleton + rule-based triage + unified error responses
 
 ## Notes
 Each milestone focuses on a specific engineering practice to mirror production-quality systems.
