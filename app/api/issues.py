@@ -57,10 +57,10 @@ def create_issue(payload: IssueCreate, db: Session = Depends(get_db)):
                     "title": payload.title,
                     "description": payload.description,
                     "service": payload.service,
-                    "environment": payload.environment,
-                    "status": IssueStatus.new,
-                    "predicted_severity": severity,
-                    "predicted_category": category,
+                    "environment": payload.environment.value,
+                    "status": IssueStatus.new.value,
+                    "predicted_severity": severity.value,
+                    "predicted_category": category.value,
                 },
             )
             .mappings()
